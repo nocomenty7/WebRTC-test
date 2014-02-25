@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <link rel="stylesheet" type="text/css" href="/stylesheets/login.css"/>
+      <script type="text/javascript" src="javascripts/jquery-1.10.2.js"></script>
+      <script type="text/javascript" src="javascripts/jquery.autosize.js"></script>
+      <script type="text/javascript" src="javascripts/jquery-ui.js"></script>
+      <script type="text/javascript" src="/javascripts/login.js"></script>
+      <script type="text/javascript" src="/javascripts/spin.js"></script>
+    
+	</head>
+	<body>
+		<!-- hyunwoo's addition -->
+  		<div id="disable"> </div>
+		<div id="wrap">
+			<div id="content">
+				<header>
+					<h1>LOGIN</h1>
+				</header>
+				
+				<content>
+					<form id="login" action="/login">
+						<input id="idtext" class="textfield" type="text" name="id" placeholder="E-mail" />					
+						<input id="pwdtext" class="textfield" type="password" name="password" placeholder = "Password" />
+
+						<a href="./register">
+							<input id="register" class="button" type="button" name="register" value="REGISTER" /> 
+						</a>
+						<input id="submit" class="button" type="submit" value="LOGIN"/>
+					</form>
+				</content>
+			</div>
+		</div>
+	</body>
+</html>

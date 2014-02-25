@@ -1,0 +1,152 @@
+/* @import url(http://fonts.googleapis.com/css?family=Roboto:400,100,300); */
+
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img, ol, ul, li, fieldset, form, label, legend, table, input{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+body{
+    width: 100%;
+    height: 100%;
+    line-height: 1; 
+    background-color: #f2f2f2;
+    font: 300 17px 'Roboto', sans-serif;
+}
+
+
+#wrap{
+    width: 560px;
+    margin: 100px auto;
+    overflow: hidden;
+    background-color: rgb(101, 101, 101);
+    border-radius: 10px;
+    border: 4px solid rgb(180, 180, 180);
+}
+
+
+header{
+    margin: 0 auto;
+    height: 120px;
+}
+
+header h1{
+    font: 300 60px 'Roboto', sans-serif;
+    color: white;
+    text-align: center;
+    line-height: 130px;
+}
+
+content form{
+    width: 400px;
+    height: 480px;
+    margin: 0 auto;
+    position: relative;
+}
+
+content form p{
+    margin: 5px 0;
+    margin-top: 20px;
+    color: rgb(192, 192, 192);
+    font-weight: 100;
+}
+
+.first{
+    margin-top: 0;
+}
+
+.textfield{
+
+    width: 388px; height: 58px;
+    padding-left: 10px; margin:0;
+    background-color: rgb(221, 221, 221);
+    border-radius: 3px;
+    color: #9d9d9d;
+    font-weight: 100;
+    border: 1px solid rgb(221, 221, 221);
+}
+
+input[type="text"]{
+    top: 0px;
+}
+
+input[type="password"]{
+    top: 85px;
+}
+
+.textfield:focus, .textfield:hover{
+    background-color: white;
+    border: none;
+    outline: none;
+    color: #5f5f5f;
+    border: 1px solid white;
+}
+
+.button{
+    bottom: 0;
+    width: 190px; height: 60px;
+    padding: 0;
+    margin: 20px 0;
+    float: right;
+    border: 0;
+    border-radius: 3px;
+    background-color: rgb(88, 88, 88);
+    color: rgb(199, 199, 199);
+    outline: none;
+}
+
+.button:hover{
+    background-color: rgb(58, 58, 58);
+    color: white;
+}
+
+
+content form input{
+    transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+}
+
+.error{
+    width: 388px; height: 58px;
+    padding-left: 10px; margin:0;
+    background-color: rgb(221, 221, 221);
+    border-radius: 3px;
+    color: #9d9d9d;
+    font-weight: 100;
+    border: 1px solid red;
+}
+
+.not_error{
+    width: 388px; height: 58px;
+    padding-left: 10px; margin:0;
+    background-color: rgb(221, 221, 221);
+    border-radius: 3px;
+    color: #9d9d9d;
+    font-weight: 100;
+    border: 1px solid green;
+}
+
+.error_msg{
+    color: rgb(255, 82, 82);
+    text-shadow: 0 0 3px rgb(32, 32, 32);
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.hidden{
+    display: none;
+}
+
+#submit{
+	float: right;
+}
+
+#back{
+	float: left;
+}

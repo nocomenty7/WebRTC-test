@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>web video conference</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/main.css"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/autocomplete.css"/>
+    
+
+    <script type="text/javascript" src="javascripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="javascripts/jquery.autosize.js"></script>
+    <script type="text/javascript" src="javascripts/jquery-ui.js"></script>
+    <script type="text/javascript" src="javascripts/typeahead.js"></script>
+    <script type="text/javascript" src="javascripts/snap.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="javascripts/adapter.js"></script>
+    <!-- <script type="text/javascript" src="javascripts/main.js" -->
+    <!-- 분리 테스트 중 (유경) 현재 폴더에 있는 main-test.js를 main.js
+	 로 바꾸면 에러남 ㅠㅠ 
+	 원래 main.js에서 animation.js에 속할 만한 것들 빼고, 자잘한 에러
+	 고친 파일이 main-test.js-->
+    <script type="text/javascript" src="javascripts/resize.js"></script>
+    <script type="text/javascript" src="javascripts/main-test.js"></script>
+    <script type="text/javascript" src="javascripts/animation.js"></script>    
+  </head>
+  <body>
+    <!-- hyunwoo's addition -->
+    <div id="disable"> </div>
+    <div id="dupNotify" style="display: none;">
+      <p>동일한 계정이 접속하였습니다. <span id="leftSecond">3</span>초후 강제종료됩니다.</p>
+    </div>
+    
+    <header role="main-header">
+      <div class="logo-wrap">
+	<div class="logo-cover"></div>
+	<a id="logo"></a>
+      </div>
+      <div id="header-user-wrap">
+
+	<div id="huw-name-wrap">
+	  <div id="hun-subwrap">
+
+	    <a class="header-user-name">
+	      <span id='username'></span>  
+	    </a>
+	    <a class="header-arrow pointer"></a>
+	  </div>
+
+	  <div id="hun-popover" class="close hidden popup">
+	    <ul class="hup-ul">
+	      <li id="hunp-profile-edit">프로필수정</li>
+	      <hr />
+	      <a href="./logout" style="text-decoration:none"><li id="hunp-logout">로그아웃</li></a> <!--li를 a태그로 감싼다-->
+	    </ul>
+	  </div>
+	</div>
+	
+	<div id="header-buttons-wrap">
+	  <div id="header-add-friends" class="button-wrap">
+	    <a id="header-button-add-friends" class="button"></a>
+
+	    <div id="hbaf-caption" class="hidden caption" role="caption">
+	      <span>친구추가</span>
+	    </div>
+
+	    <div id="hf-search-wrap" class="hidden close popup">
+	      <div class="hfs-arrow"></div>
+	      <div class="hfs-content-wrap">
+		<p>검색된 이메일을 클릭하면 친구가 추가됩니다</p>
+		<form>
+		  <input id="friends-search-input" type="text"
+			 class="textfield search-text" placeholder="example@gmail.com" />
+		  <input type="text" style="display: none;" /> <!--반드시 추가해줄것 input text가 하나면 엔터키에 서브밋을 하는 버그가 있으므로 쓴 꼼수-->
+		  <input type="hidden" id="friends-search-input-id">
+		</form>
+	      </div>
+	    </div>
+	  </div>
+
+	  
+	  <div id="header-notifications" class="button-wrap">
+	    <a class="header-notifications button"></a>
+	    <a class="header-notifications-number exception"><span id="notification-number"></span></a>
+	    
+	    <div id="hn-caption" class="hidden caption" role="caption">
+	      <span>알림</span>
+	    </div>
+	    
+	  </div>
+	</div>
+      </div>
+      
+    </header>
+    <!-- end header -->
+
+    <!-- <div id="aside2"></div> -->
+    <div id="aside-button" role="button">
+      <div class="ab-arrow ab-ltr"></div>
+    </div>
+
+
+    <aside id="aside" role="main-side-bar">
+      <!-- flist = firend-list -->
+      <div id="flist-mode-wrap" >
+	<input class="button-chat-start button long" type="button"
+	       value="화상회의를 시작합니다" />
+
+
+	<ul class="flist-wrap">
+	  
+	  <li class="online">
+	    <a class="flist-group-name">
+	      <span>ONLINE</span>
+	      <span class="flist-arrow flist-arrow-up"></span>
+	    </a>
+	    <ul class="flist">
+	      <li class="friend-name-wrap">
+		<input id="example-friend" type="checkbox"
+		       name="frnd-name" value="example friend" checked="checked">
+		<label class="friend-name"
+		       for="example-friend">Example Friend Name</label>
+		<a class="button-delete button hidden"></a>
+	      </li>
+
+	    </ul>
+	  </li>
+	  <!-- end online-list -->
+	  
+	  <li class="offline">
+	    <a class="flist-group-name">
+	      <span>OFFLINE</span>
+	      <span class="flist-arrow flist-arrow-up"></span>
+	    </a>
+	    <ul class="flist">
+
+	    </ul>
+	  </li>
+	  <!-- end offline-list -->
+	</ul>
+	
+	<!-- end sub-list -->
+
+      </div>
+      <!-- end friend-list -->
+
+      
+      
+      <div id="chat-mode" class="hidden" >
+	<div id="localcover" class="hidden">
+          <p id="localcovertext"> 화면공유 중입니다. </p>
+        </div>
+	
+	<div id="user-video-wrap">
+	  <video id="small-local-video" autoplay="true"></video>
+	</div>
+
+	<div id="chat-wrap">
+
+
+	</div>
+	<!-- end chat-wrap -->
+
+	<div id="local-msg-wrap">
+	  <form method="" id="local-form" action="">
+	    <textarea id="local-msg" onKeyUp="if(event.keyCode==13){ sendChatMessage(); }"></textarea>
+	  </form>
+
+	  <div class="buttons">
+            <!--
+		<a class="button-file-attach button small"></a>
+		<a class="button-save-msgs button small"></a>
+		-->
+            
+            <form action="/upload" method="post" enctype="multipart/form-data" target="upload_target"  name="form_upload" class="hidden">
+              <input id="myfile" name="myfile" type="file" />
+            </form>
+            <iframe id="upload_target" name="upload_target" src="" style="width:0;height:0;border:0px solid #fff;" class="hidden"></iframe>
+            <iframe id="download_target" name="download_target" src="" style="width:0;height:0;border:0px solid #fff;" class="hidden"></iframe>
+            <iframe id="chat_download_target" name="chat_download_target" src="" style="width:0;height:0;border:0px solid #fff;" class="hidden"></iframe>
+            
+            <a id="button-file-attach" class="button-file-attach button small"></a>
+            <a class="button-save-msgs button small"></a>
+            
+	  </div>
+	</div>
+
+	<!-- end local-msg-wrap -->
+      </div>
+      <!-- end chat-mode -->
+    </aside>
+
+
+    <!-- end aside -->
+    
+    <div id="content2" class="hidden">
+      <p id="sharecover"> 화면공유 중입니다. </p>
+    </div>
+
+    <div id="content">
+      <aside role="content-buttons-wrap">
+	<div class="cb-cover"></div>
+	
+	<div class="button-wrap">
+	  <a id="button-invite" class="button medium"></a>
+	  <div id="cbi-caption" class="caption hidden" role="caption">
+	    <span>친구초대</span>
+	  </div>
+	</div>
+
+	<div class="button-wrap">
+	  <a class="button-screen-share button medium"></a>
+	  <div id="cbs-caption" class="caption hidden" role="caption">
+	    <span>화면공유</span>
+	  </div>
+	</div>
+
+	<div class="button-wrap">
+	  <a class="button-record button medium"></a>
+	  <div id="cbr-caption" class="caption hidden" role="caption">
+	    <span>녹화</span>
+	  </div>
+	</div>
+
+
+	<div class="button-wrap">
+	  <a class="button-framerate frame-480 button medium"></a>
+	  <div id="cbf-caption" class="caption hidden" role="caption">
+	    <span>해상도 조절</span>
+	  </div>
+	  <div class="frames-wrap hidden close popup">
+	    <div id= "frame-240" class="frame-240 each-frame"></div>
+	    <div id= "frame-360" class="frame-360 each-frame"></div>
+	    <div id= "frame-480" class="frame-480 each-frame"></div>
+	    <div id= "frame-720" class="frame-720 each-frame"></div>
+	  </div>
+	</div>
+
+	<div class="button-wrap">
+	  <a class="button-exit button medium"></a>
+	  <div id="cbe-caption" class="caption hidden" role="caption">
+	    <span>방나가기</span>
+	  </div>
+	</div>
+	
+      </aside>
+      <!-- end content-buttons -->
+
+      <div id="video-wrap">
+	<!-- <span class="left-space"></span> -->
+	<video id="local-video-cover" class="big user-video"></video>
+	<video id="local-video" class="big user-video hidden" autoplay="true"></video>
+	<p id="button-mirror" class="button-mirror">거울보기</p>
+      </div>
+      
+      <div id="video-wrap2" class="hidden">
+	<!--<video class="big user-video"></video>-->
+	<div id="midium-set">
+	  <a class="vid1"> <video id="mid_vid1_cover" class="mid_video video"></video> </a>
+	  <a class="vid1"> <video id="mid_vid1" class="mid_video video hidden" autoplay="true"></video> </a>
+	  <a class="vid2"> <video id="mid_vid2_cover" class="mid_video video"></video> </a>
+	  <a class="vid2"> <video id="mid_vid2" class="mid_video video hidden" autoplay="true"></video> </a>
+	  <p></p>
+	  <a class="vid3"> <video id="mid_vid3_cover" class="mid_video video"></video> </a>
+	  <a class="vid3"> <video id="mid_vid3" class="mid_video video hidden" autoplay="true"></video> </a>
+	  <a class="vid4"> <video id="mid_vid4_cover" class="mid_video video"></video> </a>
+	  <a class="vid4"> <video id="mid_vid4" class="mid_video video hidden" autoplay="true"></video> </a>
+	</div>
+	
+	<div id="non-midium-set" class="hidden">
+	  <div id="large_video">
+	    <a id="large-vid1-cover" class="vid1"> <video id="large_vid1_cover" class="video large"></video> </a>
+	    <a id="large-vid1" class="vid1"> <video id="large_vid1" class="video large hidden" autoplay="true"></video> </a>
+	    <a id="large-vid2-cover" class="vid2"> <video id="large_vid2_cover" class="video large"></video> </a>
+	    <a id="large-vid2" class="vid2"> <video id="large_vid2" class="video large hidden" autoplay="true"></video> </a>
+	    <a id="large-vid3-cover" class="vid3"> <video id="large_vid3_cover" class="video large"></video> </a>
+	    <a id="large-vid3" class="vid3"> <video id="large_vid3" class="video large hidden" autoplay="true"></video> </a>
+	    <a id="large-vid4-cover" class="vid4"> <video id="large_vid4_cover" class="video large"></video> </a>
+	    <a id="large-vid4" class="vid4"> <video id="large_vid4" class="video large hidden" autoplay="true"></video> </a>
+	  </div>
+	  
+	  <div id="small_video">
+	    <a id="small-vid1-cover" class="vid1"> <video id="small_vid1_cover" class="video smallvid"></video> </a>
+	    <a id="small-vid1" class="vid1"> <video id="small_vid1" class="video smallvid hidden" autoplay="true"></video> </a>
+	    <a id="small-vid2-cover" class="vid2"> <video id="small_vid2_cover" class="video smallvid"></video> </a>
+	    <a id="small-vid2" class="vid2"> <video id="small_vid2" class="video smallvid hidden" autoplay="true"></video> </a>
+	    <a id="small-vid3-cover" class="vid3"> <video id="small_vid3_cover" class="video smallvid"></video> </a>
+	    <a id="small-vid3" class="vid3"> <video id="small_vid3" class="video smallvid hidden" autoplay="true"></video> </a>
+	    <a id="small-vid4-cover" class="vid4"> <video id="small_vid4_cover" class="video smallvid"></video> </a>
+	    <a id="small-vid4" class="vid4"> <video id="small_vid4" class="video smallvid hidden" autoplay="true"></video> </a>
+	    <!-- <a class="local"> <video class="video" style="background-color:white"></video> </a> -->
+	  </div>
+	</div>
+      </div>
+      
+      
+      <!-- end video-wrap -->
+      
+    </div>
+    <!-- end content -->
+
+
+    <div id="popover">
+      <div id="popover-profile-edit-wrap" class="popover-wrap hidden">
+	<header role="popover-tab">
+	  <h1>프로필수정</h1>
+	  <a id="profile-edit-button-delete" class="button-delete button"></a>
+	  <hr />
+	  <div id="tab-wrap">
+	    <span id="basic-tab" class="tab selected"> 기본 정보 수정 </span>
+	    <span id="password-tab" class="tab"> 비밀번호 수정 </span>
+	    <span id="withdrawal-tab" class="tab"> 탈퇴신청 </span>
+	  </div>
+	</header>
+	
+	
+	<!-- 이쪽부분 form관련해서 좀 손댔음, br/ 2번사용은 좀 더 좋은방법이 있을듯...ㅠㅠ -->
+	<content role="popover-content">
+	  <div id="profile-basic-edit" class="profile-subwrap">
+	    <form action="/changeInfo" id="changeInfo">
+	      <label>이름</label>
+	      <input id="profile_name" class="textfield" type="text"
+		     placeholder="e.g., Monica Seo" name="name" value=""/>
+	      <br />
+	      <br />
+	      <label>설명</label>
+	      <textarea id="profile_profile" class="textfield" placeholder="선택사항" name="profile" value=""></textarea>
+	      <div class="profile-edit-button-wrap">
+		<input class="button-save button no-margin" type="submit" value="SAVE"/>
+		<input class="button-profile-cancel button-cancel button" type="button" value="CANCEL"/>
+	      </div>
+	    </form>
+	  </div>
+
+	  <div id="profile-password-edit" class="profile-subwrap hidden">
+	    <form action="/changePassword" id="changePassword">
+	      <div class="pwd-bottom">
+		<label>현재 비밀번호</label>
+		<input id="current-pwd" class="textfield-pwd textfield short-text"
+		       name="current-pwd" type="password" />
+		<p id="pwd-error-dis" class="pwd-error">현재 비밀번호가 일치하지 않습니다. </p>
+	      </div>
+	      <div class="pwd-bottom">
+		<label>새로운 비밀번호 </label>
+		<input id="new-pwd" class="textfield-pwd textfield short-text"
+		       name="new-pwd"  type="password" />
+		<p id="pwd-error-short" class="pwd-error">영어, 숫자 혼합 (20byte, 공백불가)  </p>
+	      </div>
+	      <div class="pwd-bottom">
+		<label>비밀번호 확인 </label>
+		<input id="confirm-pwd" class="textfield-pwd textfield short-text"
+		       name="confirm-pwd" type="password" />
+		
+		<p id="pwd-error-confirm" class="pwd-error">새로운 비밀번호와 일치하지 않습니다.  </p>
+	      </div>
+	      <div class="profile-edit-button-wrap">
+		<input class="button-save button no-margin" type="submit" value="SAVE"/>
+		<input class="button-profile-cancel button-cancel button" type="button" value="CANCEL"/>
+	      </div>
+	    </form>
+	  </div>
+
+	  <div id="profile-withdrawal" class="profile-subwrap hidden">
+
+	    <p class="profile-p">정말 탈퇴하시겠습니까?</p>
+
+	    <form action="/withdrawal" class="profile-edit-button-wrap">
+	      <input id="withdrawal" class="button-save button no-margin" type="submit" value="OKAY"/>
+	      <input class="button-profile-cancel button-cancel button" type="button" value="CANCEL"/>
+	    </form>
+	  </div>
+	  
+	</content>
+	
+      </div>
+
+
+      <div id="popover-invite-wrap" class="hidden popup close">
+	<div id="popover-arrow">
+	</div>
+	
+	<div id="popover-invite-content-wrap">
+	  
+	  <header role="popover-invite-header">
+	    <h1>초대장 보내기</h1>
+	    <a id="invite-button-delete" class="button-delete button"></a>	  
+	    <hr />
+	  </header>
+
+
+	  <!-- 이쪽의 button-chat-start class는 지움!! 그리고 button-friend-invite 클래스를 추가함, 그리고 form도 지움 -->
+	  <input id="button-send" class="button-friend-invite button long" type="submit" value="보내기" />
+	  
+	  
+	  
+	  <ul id="invite-flist-wrap" class="flist-wrap">
+	    
+	    <li class="invite-online">
+	      <a class="flist-group-name">
+		<span>ONLINE</span>
+		<span class="flist-arrow flist-arrow-up"></span>
+	      </a>
+	      <ul class="flist">
+
+	      </ul>
+	    </li>
+	    <!-- end online-list -->
+	    
+	    <li class="invite-offline">
+	      <a class="flist-group-name">
+		<span>OFFLINE</span>
+		<span class="flist-arrow flist-arrow-up"></span>
+	      </a>
+	      <ul class="flist">
+
+	      </ul>
+	    </li>
+	    <!-- end offline-list -->
+	  </ul>
+	  
+	  <!-- end sub-list -->
+
+	</div>
+
+	<!-- end invite-popover -->
+      </div>
+
+
+
+      <div id="popover-notifications-wrap" class="popover-wrap hidden">
+	<header>
+	  <h1>메시지 알림창</h1>
+	  <a id="notification-button-delete" class="button-delete button"></a>
+	  <hr />
+	</header>
+
+	<content>
+	  <table id="noti-table">
+	    <thead>
+	      <tr>
+		<th class="noti-date">날짜</th>
+		<th class="noti-msg">메시지</th>
+		<th class="noti-count">접속자수</th>
+		<th class="noti-buttons">수락 / 거절</th>
+	      </tr>
+	    </thead>
+	    
+	    <tbody>
+	     
+	    </tbody>
+	  </table>
+	  <div class="empty-msg hidden">
+	    <p>모든 메시지를 확인했습니다</p>
+	  </div>
+
+	</content>	
+      </div>
+      <!-- end notification-popover -->
+
+
+      <div id="popover-name" class="popup close hidden">
+	<span id="pn-delete" class="button-delete"></span>
+	<p class="pn-name">김 안녕</p>
+	<hr />
+	<p class="pn-explain">안녕하세요 한양대학교 학생입니다.</p>
+      </div>
+
+      <!-- end name-popover -->
+
+      
+    </div>
+    <!-- end popover -->
+    
+  </body>
+  
+</html>

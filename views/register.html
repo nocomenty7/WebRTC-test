@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/stylesheets/register.css"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script type="text/javascript" src="javascripts/jquery-1.10.2.js"></script>
+        <script type="text/javascript" src="javascripts/jquery.autosize.js"></script>
+        <script type="text/javascript" src="javascripts/jquery-ui.js"></script>
+		<script type="text/javascript" src="/javascripts/register.js"></script>
+	</head>
+	
+	<body>
+		<div id="wrap">
+			<header>
+				<h1>REGISTER</h1>
+			</header>
+			<content>
+				<!--어떤 영역에 에러가 있으면 해당 input에 .error 클래스를
+				붙이고, 해당 p .hidden을 제거하고, 필요한 경우 내용을 바꿔주면 됩니다.-->
+				<form id="register" action="/register">
+					<p class="first">Name</p>
+					<input type="text" id="nametext" class="textfield" name="name" placeholder= "ExampleName" onkeypress="out1(this)" onkeyup="out1(this)" />
+					<p id="name_error" class="error_msg">한글, 영어, 숫자 혼합 (20byte, 공백불가)</p>
+
+					<p>E-mail</p>
+					<input type="text" id="idtext" class="textfield" name="id" placeholder = "example@gmail.com" onkeypress="out2(this)" onkeyup="out2(this)" />
+					<p id="mail_error" class="error_msg">E-mail 형식에 맞게 채워주세요.</p>
+					<p id="mail_dup_error" class="error_msg">이미 가입된 ID 입니다.</p>
+
+					<p>Create a Password</p>
+					<input type="password" id="pwdtext" class="textfield" name="password" onkeypress="out3(this)" onkeyup="out3(this)" />
+					<p id="password_error" class="error_msg">칸을 채워주세요.(1-20자 대소문자, 숫자)</p>
+
+					<p>Confirm your Password</p>
+					<input type="password" id="check_pwdtext" class="textfield" name="passwordCheck" onkeypress="out4(this)" onkeyup="out4(this)" />
+					<p id="check_password_error" class="error_msg">비밀번호가 일치하지 않습니다. 다시 입력해주세요.</p>
+					
+					<a href="./"> 
+						<input id="back" class="button" type="button" name="backbutton" value="BACK" />
+					</a>
+					<input id="submit" class="button" type="submit" value="SUBMIT"/>
+				</form>
+			</content>
+		</div>
+	</body>
+</html>
