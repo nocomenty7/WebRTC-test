@@ -1,5 +1,4 @@
 
-
 var browser = null;
 var isjoined = false;
 var firefoxusers = 0;
@@ -50,6 +49,10 @@ $(document).ready(function(){
     completeanswer[4] = false;
     
     socket = io.connect();
+
+
+
+
 
     // /*----------------------- snap.js ----------------------------------*/
     
