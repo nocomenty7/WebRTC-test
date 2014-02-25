@@ -196,6 +196,7 @@ $(document).ready(function(){
 	$(this).children(".button-delete").removeClass("hidden");
     });
 
+    
     $(document).on("mouseout", ".friend-name-wrap", function() {
 	$(this).children(".button-delete").addClass("hidden");
     });
